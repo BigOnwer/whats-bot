@@ -1,13 +1,14 @@
 // src/index.ts
 import express, { Request, Response } from 'express';
 import { Client, LocalAuth } from 'whatsapp-web.js';
-import qrcode from 'qrcode-terminal';
+import qrcode from "qrcode"
 
 const app = express();
 app.use(express.json());
 
 let whatsappClient: Client;
 let isClientReady = false;
+let qrCodeData: string | null = null
 
 // Inicializa o cliente do WhatsApp
 const initializeWhatsApp = () => {
@@ -34,10 +35,10 @@ const initializeWhatsApp = () => {
   });
 
   // Evento: QR Code para autenticação
-  whatsappClient.on('qr', (qr) => {
-    console.log('QR Code recebido. Escaneie com seu WhatsApp:');
-    qrcode.generate(qr, { small: true });
-  });
+  whatsappClient.on("qr", async (qr) => {
+    console.log("✅ QR gerado! Acesse http://localhost:3000/qr para escanear.")
+    qrCodeData = await qrcode.toDataURL(qr)
+  })
 
   // Evento: Cliente pronto
   whatsappClient.on('ready', () => {
@@ -79,6 +80,18 @@ const initializeWhatsApp = () => {
 
   whatsappClient.initialize();
 };
+
+app.get("/qr", (req, res) => {
+  if (!qrCodeData) {
+    return res.send("<h2>QR code ainda não foi gerado. Atualize a página em alguns segundos...</h2>")
+  }
+  res.send(`
+    <div style="display:flex;justify-content:center;align-items:center;height:100vh;flex-direction:column;">
+      <h2>Escaneie este QR com o WhatsApp</h2>
+      <img src="${qrCodeData}" />
+    </div>
+  `)
+})
 
 // Rota: Verificar status da conexão
 app.get('/status', (req: Request, res: Response) => {
