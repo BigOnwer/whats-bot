@@ -2,9 +2,16 @@
 import express, { Request, Response } from 'express';
 import { Client, LocalAuth } from 'whatsapp-web.js';
 import qrcode from "qrcode"
+const cors = require('cors');
 
 const app = express();
 app.use(express.json());
+
+// ✅ CORS CONFIGURADO AQUI (ANTES DAS ROTAS)
+app.use(cors({
+  origin: 'http://localhost:3000',
+  credentials: true
+}));
 
 let whatsappClient: Client;
 let isClientReady = false;
@@ -36,7 +43,7 @@ const initializeWhatsApp = () => {
 
   // Evento: QR Code para autenticação
   whatsappClient.on("qr", async (qr) => {
-    console.log("✅ QR gerado! Acesse http://localhost:3000/qr para escanear.")
+    console.log("✅ QR gerado! Acesse http://localhost:3333/qr para escanear.")
     qrCodeData = await qrcode.toDataURL(qr)
   })
 
@@ -200,7 +207,7 @@ app.post('/send-bulk', async (req: Request, res: Response) => {
 initializeWhatsApp();
 
 // Inicia o servidor
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3333;
 app.listen(PORT, () => {
   console.log(`🚀 Servidor rodando na porta ${PORT}`);
   console.log(`📱 Aguardando conexão do WhatsApp...`);
