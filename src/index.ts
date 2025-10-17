@@ -9,7 +9,7 @@ app.use(express.json());
 
 // ✅ CORS CONFIGURADO AQUI (ANTES DAS ROTAS)
 app.use(cors({
-  origin: 'https://gs-lab.vercel.app',
+  origin: 'https://gs-devdesign.vercel.app',
   credentials: true
 }));
 
