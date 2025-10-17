@@ -9,7 +9,7 @@ app.use(express.json());
 
 // ✅ CORS CONFIGURADO AQUI (ANTES DAS ROTAS)
 app.use(cors({
-  origin: 'http://localhost:3000',
+  origin: 'https://gs-lab.vercel.app',
   credentials: true
 }));
 
